@@ -11,7 +11,7 @@ Because of much easier and simplier work with queries and results. Compare:
 $sql = "SELECT * FROM table ORDER by id";
 $rows = db_array($sql); //db opened automatically based on $CONFIG, errors handled automatically
 foreach ($rows as $k => $row) {
-    printf ("%s (%s)\n", $row["Field1"], $row["Field1"]);
+    printf ("%s (%s)\n", $row["Field1"], $row["Field2"]);
 }
 ```
 
@@ -25,7 +25,7 @@ if (mysqli_connect_errno()) { //check connection
 $query = "SELECT * FROM table ORDER by id";
 if ($result = mysqli_query($link, $query)) {
     while ($row = mysqli_fetch_assoc($result)) { //fetch associative array
-        printf ("%s (%s)\n", $row["Field1"], $row["Field1"]);
+        printf ("%s (%s)\n", $row["Field1"], $row["Field2"]);
     }
     mysqli_free_result($result); //free result set
 }
@@ -215,3 +215,57 @@ $is_exists=db_is_record_exists('users', 'john@test.com', 'email', 1);  #will che
 $is_exists=db_is_record_exists('users', 'john@test.com', 'email', 'John', 'nick');  #will check: where email='john@test.com' and nick<>'John'
 
 ```
+
+## Object-Oriented API
+
+Note, creating DB instance doesn't open connection yet. Connection to db server will be opened automatically with first query.
+
+```php
+$db = new DB(); //if no params passed, db connection settings read from global $CONFIG as described above
+
+//or pass connection settings explicitly
+$dbconfig=array(
+    'DBNAME'    => 'your_database_name',
+    'USER'      => 'your_database_user',
+    'PWD'       => 'password',
+    'HOST'      => 'localhost', //localhost or other host
+    'PORT'      => '', //if empty default MySQL port used
+)
+$db = new DB($dbconfig);
+
+$db->connect(); //actually no need, will be done automatically with first query
+
+//methods are similar as with procedural API
+$db->value($sql);
+$db->value($table_name, $where[, $field_name]);
+$db->value($table_name, $where, 'count(*)');
+
+$db->row($sql);
+$db->row($table_name, $where [, $orderby]);
+
+$db->array($sql);
+$db->array($table_name, $where [[, $orderby], $limit]);
+
+$db->col($sql);
+$db->col($table_name, $where [, $field_name [, $orderby]]);
+
+$db->query($sql);
+$db->exec($sql);
+
+$db->insert($table_name, $data [, $options]);
+
+$db->update($table_name, $data, $id);
+$db->update($table_name, $data, $id, $id_column_name [[, $more_set], $more_where]);
+$db->update($table_name, $data, $where);
+
+$db->delete($table_name, $id [[, $id_column_name = 'id'], $more_where='']);
+
+$db->is_record_exists($table_name, $value, $field [, $not_value [, $not_field]]);
+
+$db->get_identity();
+$db->quote($value);
+```
+
+## TODO
+
+- there are dependency on `logger()` function, need to be fixed (for now you may just comment all calls to logger())
