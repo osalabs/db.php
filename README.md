@@ -3,6 +3,35 @@ simplified work with MySQL databases for your website, convenient wrapper for my
 
 Contains `DB` class as well as procedural shortcuts (uses DB singleton)
 
+### Why I created this library? 
+Because of much easier and simplier work with queries and results. Compare:
+
+**db.php use:**
+```php
+$sql = "SELECT * FROM table ORDER by id";
+$rows = db_array($sql); //db opened automatically based on $CONFIG, errors handled automatically
+foreach ($rows as $k => $row) {
+    printf ("%s (%s)\n", $row["Field1"], $row["Field1"]);
+}
+```
+
+**"native" mysqli use:**
+```php
+$link = mysqli_connect("localhost", "my_user", "my_password", "world"); //connect
+if (mysqli_connect_errno()) { //check connection
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+$query = "SELECT * FROM table ORDER by id";
+if ($result = mysqli_query($link, $query)) {
+    while ($row = mysqli_fetch_assoc($result)) { //fetch associative array
+        printf ("%s (%s)\n", $row["Field1"], $row["Field1"]);
+    }
+    mysqli_free_result($result); //free result set
+}
+mysqli_close($link); //close connection
+```
+
 ## Procedural API
 
 Note, there should be global $CONFIG variable with defined DB connection settings:
