@@ -5,6 +5,20 @@ Contains `DB` class as well as procedural shortcuts (uses DB singleton)
 
 ## Procedural API
 
+Note, there should be global $CONFIG variable with defined DB connection settings:
+```php
+$CONFIG = array(
+    'DB'    => array(
+                'DBNAME'    => 'your_database_name',
+                'USER'      => 'your_database_user',
+                'PWD'       => 'password',
+                'HOST'      => 'localhost', //localhost or other host
+                'PORT'      => '', //if empty default MySQL port used
+                ),
+);
+```
+This way if you use procedural interface, db.php will automatically open connection when first function called.
+
 ### Summary
 - `db_value($sql)` get single value via arbitrary sql
 - `db_value($table_name, $where[, $field_name])` get single value from table/where conditions and optional field_name(if not passed - first field value returned)
